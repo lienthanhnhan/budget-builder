@@ -1,0 +1,101 @@
+<div class="budget-table py-4">
+  <table class="min-w-full border-collapse">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Start Period V End Period V</th>
+        <th *ngFor="let month of months" class="border px-4 py-2">{{ month }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Income Categories -->
+      <tr>
+        <td class="border px-4 py-2 font-semibold" [attr.colspan]="months.length + 1">Income</td>
+      </tr>
+      <ng-container *ngFor="let category of incomeCategories; let i = index">
+        <tr class="category-row">
+          <td class="border px-4 py-2">
+            <input type="text" [(ngModel)]="category.name" [disabled]="true">
+            <button class="delete-icon" (click)="deleteIncomeCategory(i)">
+              <svg class="h-6 w-6 text-red-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="18" y1="6" x2="6" y2="18" />  <line x1="6" y1="6" x2="18" y2="18" /></svg>
+            </button>
+          </td>
+          <td *ngFor="let month of category.months; let j = index" class="border px-4 py-2">
+            <span>{{ month.amount }}</span>
+          </td>
+        </tr>
+      </ng-container>
+      <tr>
+        <td class="border px-4 py-2">
+          <input class="w-full" type="text" [(ngModel)]="newIncomeCategoryName" placeholder="Add new 'Income' category">
+        </td>
+        <td *ngFor="let month of months; let last = last" class="border px-4 py-2">
+          <input type="number" [(ngModel)]="newIncomeCategoryAmounts[month]" placeholder="0" 
+                 (keydown.tab)="last ? addNewIncomeCategory() : null"
+                 (blur)="onBlurInput()"
+                 (contextmenu)="onRightClick($event)">
+        </td>
+      </tr>
+      <tr class="font-semibold">
+        <td class="border px-4 py-2">Income Total</td>
+        <td *ngFor="let total of getMonthlyTotal('income')" class="border px-4 py-2">{{ total }}</td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-semibold" [attr.colspan]="months.length + 1"></td>
+      </tr>
+
+      <!-- Expense Categories -->
+      <tr>
+        <td class="border px-4 py-2 font-semibold" [attr.colspan]="months.length + 1">Expenses</td>
+      </tr>
+      <ng-container *ngFor="let category of expenseCategories; let i = index">
+        <tr class="category-row">
+          <td class="border px-4 py-2">
+            <input type="text" [(ngModel)]="category.name" [disabled]="true">
+            <button class="delete-icon" (click)="deleteExpenseCategory(i)">
+              <svg class="h-6 w-6 text-red-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="18" y1="6" x2="6" y2="18" />  <line x1="6" y1="6" x2="18" y2="18" /></svg>
+            </button>
+          </td>
+          <td *ngFor="let month of category.months" class="border px-4 py-2">
+            <span>{{ month.amount }}</span>
+          </td>
+        </tr>
+      </ng-container>
+      <tr>
+        <td class="border px-4 py-2">
+          <input class="w-full" type="text" [(ngModel)]="newExpenseCategoryName" placeholder="Add new 'Expenses' category">
+        </td>
+        <td *ngFor="let month of months; let last = last" class="border px-4 py-2">
+          <input type="number" [(ngModel)]="newExpenseCategoryAmounts[month]" placeholder="0" 
+                 (keydown.tab)="last ? addNewExpenseCategory() : null"
+                 (blur)="onBlurInput()"
+                 (contextmenu)="onRightClick($event)">
+        </td>
+      </tr>
+      <tr class="font-semibold">
+        <td class="border px-4 py-2">Expense Total</td>
+        <td *ngFor="let total of getMonthlyTotal('expense')" class="border px-4 py-2">{{ total }}</td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-semibold" [attr.colspan]="months.length + 1"></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="border px-4 py-2">Profit / Loss</td>
+        <td *ngFor="let total of getProfitOrLoss()" class="border px-4 py-2">{{ total }}</td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2">Opening Balance</td>
+        <td *ngFor="let balance of getOpeningBalances()" class="border px-4 py-2">{{ balance }}</td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2">Closing Balance</td>
+        <td *ngFor="let balance of getClosingBalances()" class="border px-4 py-2">{{ balance }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <!-- Context Menu -->
+  <div class="context-menu" [ngStyle]="contextMenuStyle" *ngIf="showContextMenu">
+    <button (click)="applyToAll()">Apply to all</button>
+  </div>
+</div>
